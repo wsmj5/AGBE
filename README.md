@@ -6,7 +6,7 @@ GraohicsMaker (Unfinished):
 CTRL + S to save.
 
     Terminal/CLI syntax:
-    for modes 1, 2, 3
+    for modes 0, 1, 2
     GraphicsMaker <mode> <output file palette> <output file tile> <output file screen>
     for modes 3, 5
     GraphicsMaker <mode> <input 16BMP> <logic> <output BMP>
