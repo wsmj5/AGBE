@@ -1,0 +1,63 @@
+# depslib dependency file v1.0
+1645895696 source:c:\users\goldengun\onedrive\documents\c++\game engines\agbe\graphicsmaker\main.cpp
+	<fstream>
+	"olcPixelGameEngine.h"
+
+1634539319 c:\users\goldengun\onedrive\documents\c++\game engines\agbe\graphicsmaker\olcpixelgameengine.h
+	"olcPixelGameEngine.h"
+	"olcPixelGameEngine.h"
+	<cmath>
+	<cstdint>
+	<string>
+	<iostream>
+	<streambuf>
+	<sstream>
+	<chrono>
+	<vector>
+	<list>
+	<thread>
+	<atomic>
+	<fstream>
+	<map>
+	<functional>
+	<algorithm>
+	<array>
+	<cstring>
+	<experimental/filesystem>
+	<filesystem>
+	<windows.h>
+	<X11/X.h>
+	<X11/Xlib.h>
+	<GL/glut.h>
+	<GL/freeglut_ext.h>
+	<GLUT/glut.h>
+	<objc/message.h>
+	<objc/NSObjCRuntime.h>
+	<dwmapi.h>
+	<GL/gl.h>
+	<GL/gl.h>
+	<GL/glx.h>
+	<OpenGL/OpenGL.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<dwmapi.h>
+	<gl/GL.h>
+	<GL/gl.h>
+	<GL/glx.h>
+	<OpenGL/OpenGL.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<EGL/egl.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<emscripten/emscripten.h>
+	<objidl.h>
+	<gdiplus.h>
+	<gdiplus/gdiplusinit.h>
+	<gdiplusinit.h>
+	<shlwapi.h>
+	<png.h>
+	"stb_image.h"
+	<emscripten/html5.h>
+	<emscripten/key_codes.h>
+
