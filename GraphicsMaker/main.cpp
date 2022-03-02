@@ -7,7 +7,7 @@ char charlist[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
 struct sPal{unsigned short r:5 = 0, g:5 = 0, b:5 = 0;}__attribute__((packed));
 struct sScrn{unsigned short nameL:5 = 0, nameH:5 = 0, h:1 = 0, v:1 = 0, pal:4 = 0;}__attribute__((packed));
 sPal pal[256];
-sScrn scrn[1024];
+sScrn scrn[4][1024];
 unsigned char tildath[1024][64] = {0};
 unsigned char* chars = (unsigned char*)calloc(0x10000, 1);
 unsigned short SData[1024] = {0};
@@ -15,6 +15,9 @@ unsigned char* VRAM = (unsigned char*)calloc(0x9600, 2);
 char* name;
 char* name1;
 char* name2;
+bool xx = 0;
+bool xy = 0;
+char s = 0;
 unsigned char namelen;
 
 class GraphicsMaker : public olc::PixelGameEngine
@@ -28,19 +31,19 @@ class GraphicsMaker : public olc::PixelGameEngine
         unsigned char r = pixel.r / 31.0 * 255, g = pixel.g / 31.0 * 255, b = pixel.b / 31.0 * 255;
         return (0xFF << 24) | (b << 16) | (g << 8) | r;}
     void printtile(unsigned char x, unsigned char y){
-        sScrn tile = scrn[y * 32 + x];
+        sScrn tile = scrn[scrnsel][y * 32 + x];
         short xdirect = tile.h * -2 + 1;
         short ydirect = tile.v * -2 + 1;
         for(int i = 0; i < 8; i++)
         {
-            Draw((8 + 0 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8]]));
-            Draw((8 + 1 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8 + 1]]));
-            Draw((8 + 2 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8 + 2]]));
-            Draw((8 + 3 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8 + 3]]));
-            Draw((8 + 4 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8 + 4]]));
-            Draw((8 + 5 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8 + 5]]));
-            Draw((8 + 6 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8 + 6]]));
-            Draw((8 + 7 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v) % 8 + y * 8 + 256, uint1632(pal[tile.pal * 16 + tildath[tile.nameH << 5 | tile.nameL][i * 8 + 7]]));
+            Draw((8 + 0 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3]]));
+            Draw((8 + 1 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3 | 1]]));
+            Draw((8 + 2 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3 | 2]]));
+            Draw((8 + 3 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3 | 3]]));
+            Draw((8 + 4 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3 | 4]]));
+            Draw((8 + 5 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3 | 5]]));
+            Draw((8 + 6 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3 | 6]]));
+            Draw((8 + 7 * xdirect - tile.h) % 8 + x * 8 + 512, (8 + i * ydirect - tile.v & 7) + (y << 3) + 256, uint1632(pal[tile.pal << 4 | tildath[tile.nameH << 5 | tile.nameL][i << 3 | 7]]));
         }}
     unsigned char palpos = 0;
     unsigned short tilpos = 0;
@@ -54,6 +57,7 @@ public:
 	}
     float timelapse = 0;
     char edit = 0;
+    char scrnsel = 0;
 	bool OnUserUpdate(float fElapsedTime) override
 	{
 	    timelapse += fElapsedTime;
@@ -64,7 +68,8 @@ public:
                     std::ofstream ofiletil(name1, std::ios::binary);
                     std::ofstream ofilescrn(name2, std::ios::binary);
                     ofilepal.write((char*)pal, 512);
-                    ofilescrn.write((char*)scrn, 2048);
+                    for(int i = 0; i < 1 << xx << xy; i++){
+                        ofilescrn.write((char*)scrn[i], 2048);}
                     ofilepal.close();
                     ofilescrn.close();
                     for(int i = 0; i < 1024 * 32; i++){
@@ -207,6 +212,8 @@ public:
                     case 2:{
         if((int)(timelapse * 2) & 1) {Draw((scrnpos & 0x1F) * 8 + 512, (scrnpos >> 5 & 0x1F) * 8 + 256);}
         else {Draw((scrnpos & 0x1F) * 8 + 512, (scrnpos >> 5 & 0x1F) * 8 + 256, olc::RED);}
+        if(GetKey(olc::SPACE).bPressed){
+            scrnsel++, scrnsel &= (1 << xx << xy) - 1;}
         if(GetKey(olc::LEFT).bPressed)
         {
             unsigned char temppos = scrnpos & 0x1F;
@@ -239,16 +246,16 @@ public:
             scrnpos |= temppos << 5;
             timelapse = 0;
         }
-        if(GetKey(olc::EQUALS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameL++;
-        if(GetKey(olc::MINUS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameL--;
-        if(GetKey(olc::EQUALS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameH++;
-        if(GetKey(olc::MINUS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameH--;
-        if(GetKey(olc::H).bPressed) scrn[scrnpos].h ^= 1;
-        if(GetKey(olc::V).bPressed) scrn[scrnpos].v ^= 1;
-        if(GetKey(olc::K1).bPressed) scrn[scrnpos].pal ^= 1;
-        if(GetKey(olc::K2).bPressed) scrn[scrnpos].pal ^= 0b10;
-        if(GetKey(olc::K3).bPressed) scrn[scrnpos].pal ^= 0b100;
-        if(GetKey(olc::K4).bPressed) scrn[scrnpos].pal ^= 0b1000;
+        if(GetKey(olc::EQUALS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameL++;
+        if(GetKey(olc::MINUS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameL--;
+        if(GetKey(olc::EQUALS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameH++;
+        if(GetKey(olc::MINUS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameH--;
+        if(GetKey(olc::H).bPressed) scrn[scrnsel][scrnpos].h ^= 1;
+        if(GetKey(olc::V).bPressed) scrn[scrnsel][scrnpos].v ^= 1;
+        if(GetKey(olc::K1).bPressed) scrn[scrnsel][scrnpos].pal ^= 1;
+        if(GetKey(olc::K2).bPressed) scrn[scrnsel][scrnpos].pal ^= 0b10;
+        if(GetKey(olc::K3).bPressed) scrn[scrnsel][scrnpos].pal ^= 0b100;
+        if(GetKey(olc::K4).bPressed) scrn[scrnsel][scrnpos].pal ^= 0b1000;
                         break;}}
                 break;}
             case 1:{
@@ -257,7 +264,8 @@ public:
                     std::ofstream ofiletil(name1, std::ios::binary);
                     std::ofstream ofilescrn(name2, std::ios::binary);
                     ofilepal.write((char*)pal, 512);
-                    ofilescrn.write((char*)scrn, 2048);
+                    for(int i = 0; i < 1 << xx << xy; i++){
+                        ofilescrn.write((char*)scrn[i], 2048);}
                     ofilepal.close();
                     ofilescrn.close();
                     ofiletil.write((char*)tildath, 1024 * 64);
@@ -401,6 +409,8 @@ public:
                     case 2:{
         if((int)(timelapse * 2) & 1) {Draw((scrnpos & 0x1F) * 8 + 512, (scrnpos >> 5 & 0x1F) * 8 + 256);}
         else {Draw((scrnpos & 0x1F) * 8 + 512, (scrnpos >> 5 & 0x1F) * 8 + 256, olc::RED);}
+        if(GetKey(olc::SPACE).bPressed){
+            scrnsel++, scrnsel &= (1 << xx << xy) - 1;}
         if(GetKey(olc::LEFT).bPressed)
         {
             unsigned char temppos = scrnpos & 0x1F;
@@ -433,41 +443,48 @@ public:
             scrnpos |= temppos << 5;
             timelapse = 0;
         }
-        if(GetKey(olc::EQUALS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameL++;
-        if(GetKey(olc::MINUS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameL--;
-        if(GetKey(olc::EQUALS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameH++;
-        if(GetKey(olc::MINUS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameH--;
-        if(GetKey(olc::H).bPressed) scrn[scrnpos].h ^= 1;
-        if(GetKey(olc::V).bPressed) scrn[scrnpos].v ^= 1;
+        if(GetKey(olc::EQUALS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameL++;
+        if(GetKey(olc::MINUS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameL--;
+        if(GetKey(olc::EQUALS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameH++;
+        if(GetKey(olc::MINUS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnsel][scrnpos].nameH--;
+        if(GetKey(olc::H).bPressed) scrn[scrnsel][scrnpos].h ^= 1;
+        if(GetKey(olc::V).bPressed) scrn[scrnsel][scrnpos].v ^= 1;
                         break;}}
                 break;}
             case 2:{
+                unsigned char scrn[(0b10000 << s) * (0b10000 << s)] = {0};
+                bool scale = s == 3;
                 if(GetKey(olc::CTRL).bHeld && GetKey(olc::S).bPressed){
                     std::ofstream ofilepal(name, std::ios::binary);
                     std::ofstream ofiletil(name1, std::ios::binary);
                     std::ofstream ofilescrn(name2, std::ios::binary);
                     ofilepal.write((char*)pal, 512);
                     //ofilescrn.write((char*)scrn, 2048);
-                    for(int i = 0; i < 1024; i++){
+                    for(int i = 0; i < (0b10000 << s) * (0b10000 << s); i++){
                         ofilescrn.write((char*)(scrn + i), 1);}
                     ofilepal.close();
                     ofilescrn.close();
                     ofiletil.write((char*)tildath, 256 * 64);
-                    std::cout << "YES!";
                     ofiletil.close();}
                 if(GetKey(olc::TAB).bPressed){
                     edit++, edit %= 3;}
-                for(int i = 0; i < 0x400; i++) printtile(i & 0x1F, i >> 5 & 0x1F);
+                for(int i = 0; i < (0b10000 << s) * (0b10000 << s); i++){
+                    char sclae = 2 / (1 + s);
+                    for(int j = 0; j < 8; j++){
+                        for(int k = 0; k < 8; k++){
+                            for(int l = 0; l < 1 << sclae; l++)
+                                for(int m = 0; m < 1 << sclae; m++)
+                            Draw(((k | (i & (0b10000 << s) - 1) << 3) << sclae) + (256 << scale) + l, ((j | i >> 4 >> s << 3) << sclae) + m, uint1632(pal[tildath[scrn[i]][j << 3 | k]]));}}}
                 switch(edit){
                     case 0:{
                         for(int i = 0; i < 0x100; i++){
-                            for(int j = 0; j < 16; j++)
-                                for(int k = 0; k < 16; k++)
-                                    Draw((i & 0xF) * 16 + k + 512, (i >> 4 & 0xF) * 16 + j, uint1632(pal[i]));}
+                            for(int j = 0; j < 16 << scale; j++)
+                                for(int k = 0; k < 16 << scale; k++)
+                                    Draw((i & 0xF) * (16 << scale) + k, (i >> 4 & 0xF) * (16 << scale) + j, uint1632(pal[i]));}
                         if((int)(timelapse * 2) & 1){
                             for(int j = 0; j < 2; j++)
                                 for(int k = 0; k < 2; k++)
-                                    Draw((palpos & 0xF) * 16 + 2 + k + 512, (palpos >> 4 & 0xF) * 16 + 2 + j, 0xFFFFFF ^ uint1632(pal[palpos]));}
+                                    Draw((palpos & 0xF) * (16 << scale) + k, (palpos >> 4 & 0xF) * (16 << scale) + j, 0xFFFFFF ^ uint1632(pal[palpos]));}
         if(GetKey(olc::LEFT).bPressed)
         {
             unsigned char temppos = palpos & 0xF;
@@ -510,14 +527,14 @@ public:
                     case 1:{
                         for(int j = 0; j < 0x100; j++)
                             for(int i = 0; i < 0x40; i++)
-                                for(int k = 0; k < 4; k++)
-                                    for(int l = 0; l < 4; l++)
-                                        Draw(((j & 0xF) * 8 + (i & 0x7)) * 4 + l, ((j >> 4 & 0xF) * 8 + (i >> 3 & 0x7)) * 4 + k, uint1632(pal[tildath[j][i]]));
+                                for(int k = 0; k < 2 << scale; k++)
+                                    for(int l = 0; l < 2 << scale; l++)
+                                        Draw(((j & 0xF) * 8 + (i & 0x7)) * (2 << scale) + l, ((j >> 4 & 0xF) * 8 + (i >> 3 & 0x7)) * (2 << scale) + k + (256 << scale), uint1632(pal[tildath[j][i]]));
 //                                        (tildath[j][i] & 0x8) << 20 | (tildath[j][i] & 0x8) << 19 | (tildath[j][i] & 0x8) << 19 | (tildath[j][i] & 0x4) << 18 |
 //                                        (tildath[j][i] & 0x4) << 17 | (tildath[j][i] & 0x4) << 16 | (tildath[j][i] & 0x4) << 15 | (tildath[j][i] & 0x4) << 14 |
 //                                        (tildath[j][i] & 0x2) << 6 | (tildath[j][i] & 0x2) << 5 | (tildath[j][i] & 0x1) << 5 | (tildath[j][i] & 0x1) << 4 |
 //                                        (tildath[j][i] & 0x1) << 3 | (tildath[j][i] & 0x1) << 2 | (tildath[j][i] & 0x1) << 1 | (tildath[j][i] & 0x1)));
-                        if((int)(timelapse * 2) & 1) Draw(((tilposMACHO & 0xF) * 8 + (tilpos & 0x7)) * 4, ((tilposMACHO >> 4 & 0xF) * 8 + (tilpos >> 3 & 0x7)) * 4, 0xFF00FF00);
+                        if((int)(timelapse * 2) & 1) Draw(((tilposMACHO & 0xF) * 8 + (tilpos & 0x7)) * (2 << scale), ((tilposMACHO >> 4 & 0xF) * 8 + (tilpos >> 3 & 0x7)) * (2 << scale) + (256 << scale), 0xFF00FF00);
         if(GetKey(olc::A).bPressed)
         {
             unsigned char temppos = tilposMACHO & 0x1F;
@@ -592,8 +609,7 @@ public:
         if(GetKey(olc::K8).bPressed) tildath[tilposMACHO][tilpos] ^= 0x80;
                         break;}
                     case 2:{
-        if((int)(timelapse * 2) & 1) {Draw((scrnpos & 0x1F) * 8 + 512, (scrnpos >> 5 & 0x1F) * 8 + 256);}
-        else {Draw((scrnpos & 0x1F) * 8 + 512, (scrnpos >> 5 & 0x1F) * 8 + 256, olc::RED);}
+        if((int)(timelapse * 2) & 1) {Draw((scrnpos & 0x1F) * (8 << 2 / (1 + s)) + (256 << scale), (scrnpos >> 5 & 0x1F) * (8 << 2 / (1 + s)));}
         if(GetKey(olc::LEFT).bPressed)
         {
             unsigned char temppos = scrnpos & 0x1F;
@@ -626,10 +642,38 @@ public:
             scrnpos |= temppos << 5;
             timelapse = 0;
         }
-        if(GetKey(olc::EQUALS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameL++;
-        if(GetKey(olc::MINUS).bPressed && !GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameL--;
-        if(GetKey(olc::EQUALS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameH++, scrn[scrnpos].nameH & 7;
-        if(GetKey(olc::MINUS).bPressed && GetKey(olc::SHIFT).bHeld) scrn[scrnpos].nameH--, scrn[scrnpos].nameH & 7;
+        if(GetKey(olc::EQUALS).bPressed && !GetKey(olc::SHIFT).bHeld)
+        {
+            unsigned char tempname = scrn[scrnpos] & 0xF;
+            scrn[scrnpos] ^= tempname;
+            tempname++, tempname &= 0xF;
+            scrn[scrnpos] |= tempname;
+            timelapse = 0;
+        }
+        if(GetKey(olc::MINUS).bPressed && !GetKey(olc::SHIFT).bHeld)
+        {
+            unsigned char tempname = scrn[scrnpos] & 0xF;
+            scrn[scrnpos] ^= tempname;
+            tempname--, tempname &= 0xF;
+            scrn[scrnpos] |= tempname;
+            timelapse = 0;
+        }
+        if(GetKey(olc::EQUALS).bPressed && GetKey(olc::SHIFT).bHeld)
+        {
+            unsigned char tempname = scrn[scrnpos] >> 4 & 0xF;
+            scrn[scrnpos] ^= tempname << 4;
+            tempname++, tempname &= 0xF;
+            scrn[scrnpos] |= tempname << 4;
+            timelapse = 0;
+        }
+        if(GetKey(olc::MINUS).bPressed && GetKey(olc::SHIFT).bHeld)
+        {
+            unsigned char tempname = scrn[scrnpos] >> 4 & 0xF;
+            scrn[scrnpos] ^= tempname << 4;
+            tempname++, tempname &= 0xF;
+            scrn[scrnpos] |= tempname << 4;
+            timelapse = 0;
+        }
                         break;}}
                 break;}
             case 3:{
@@ -670,18 +714,21 @@ int main(int argc, char** argv){
     GraphicsMaker inst;
     switch(mode){
         case 0:{
+            xx = *argv[5] - 0x30, xy = *argv[6] - 0x30;
             name1 = argv[3], name2 = argv[4];
             if(inst.Construct(768, 512, 2, 2))
                 inst.Start();
             break;}
         case 1:{
+            xx = *argv[5] - 0x30, xy = *argv[6] - 0x30;
             name1 = argv[3], name2 = argv[4];
             if(inst.Construct(768, 512, 2, 2))
                 inst.Start();
             break;}
         case 2:{
             name1 = argv[3], name2 = argv[4];
-            if(inst.Construct(768, 512, 2, 2))
+            s = *argv[5] - 0x30;
+            if(inst.Construct((256 << (s == 3)) + ((0x80 << s) >= 512 ? (0x80 << s) : 512), (0x80 << s) >= 512 ? (0x80 << s) : 512, 1 + (s <= 2), 1 + (s <= 2)))
                 inst.Start();
             break;}
         case 3:{
